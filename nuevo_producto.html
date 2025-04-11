@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if producto else 'Nuevo' }} Producto - ERP Digital{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">{{ 'Editar' if producto else 'Nuevo' }} Producto</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               value="{{ producto.nombre if producto else '' }}" required>
+                        <div class="invalid-feedback">
+                            Por favor ingresa el nombre del producto.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ producto.descripcion if producto else '' }}</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="precio" name="precio" 
+                                       value="{{ producto.precio if producto else '' }}" step="0.01" min="0" required>
+                            </div>
+                            <div class="invalid-feedback">
+                                Por favor ingresa un precio válido.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" name="stock" 
+                                   value="{{ producto.stock if producto else '0' }}" min="0" required>
+                            <div class="invalid-feedback">
+                                Por favor ingresa una cantidad válida.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tipo" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipo" name="tipo" required>
+                            <option value="">Selecciona un tipo</option>
+                            <option value="fisico" {{ 'selected' if producto and producto.tipo == 'fisico' else '' }}>Físico</option>
+                            <option value="digital" {{ 'selected' if producto and producto.tipo == 'digital' else '' }}>Digital</option>
+                            <option value="servicio" {{ 'selected' if producto and producto.tipo == 'servicio' else '' }}>Servicio</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Por favor selecciona un tipo de producto.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {{ 'Guardar Cambios' if producto else 'Crear Producto' }}
+                        </button>
+                        <a href="{{ url_for('productos') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if venta else 'Nueva' }} Venta - ERP Digital{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">{{ 'Editar' if venta else 'Nueva' }} Venta</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="cliente_id" class="form-label">Cliente</label>
+                        <select class="form-select" id="cliente_id" name="cliente_id" required>
+                            <option value="">Selecciona un cliente</option>
+                            {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}" {{ 'selected' if venta and venta.cliente_id == cliente.id else '' }}>
+                                {{ cliente.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Por favor selecciona un cliente.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="metodo_pago" class="form-label">Método de Pago</label>
+                        <select class="form-select" id="metodo_pago" name="metodo_pago" required>
+                            <option value="">Selecciona un método de pago</option>
+                            <option value="efectivo" {{ 'selected' if venta and venta.metodo_pago == 'efectivo' else '' }}>Efectivo</option>
+                            <option value="tarjeta" {{ 'selected' if venta and venta.metodo_pago == 'tarjeta' else '' }}>Tarjeta</option>
+                            <option value="transferencia" {{ 'selected' if venta and venta.metodo_pago == 'transferencia' else '' }}>Transferencia</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Por favor selecciona un método de pago.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Productos</label>
+                        <div id="productos-container">
+                            {% if venta %}
+                                {% for detalle in venta.detalles %}
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <select class="form-select producto-select" name="producto_id[]" required>
+                                            <option value="">Selecciona un producto</option>
+                                            {% for producto in productos %}
+                                            <option value="{{ producto.id }}" {{ 'selected' if detalle.producto_id == producto.id else '' }}>
+                                                {{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="number" class="form-control cantidad-input" name="cantidad[]" 
+                                               value="{{ detalle.cantidad }}" min="1" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProducto(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <select class="form-select producto-select" name="producto_id[]" required>
+                                            <option value="">Selecciona un producto</option>
+                                            {% for producto in productos %}
+                                            <option value="{{ producto.id }}">
+                                                {{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="number" class="form-control cantidad-input" name="cantidad[]" min="1" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProducto(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-outline-primary mt-2" onclick="agregarProducto()">
+                            <i class="fas fa-plus"></i> Agregar Producto
+                        </button>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {{ 'Guardar Cambios' if venta else 'Crear Venta' }}
+                        </button>
+                        <a href="{{ url_for('ventas') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Resumen</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>IVA (16%):</span>
+                    <span id="iva">$0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Total:</strong>
+                    <strong id="total">$0.00</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function agregarProducto() {
+    const container = document.getElementById('productos-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'row mb-2';
+    newRow.innerHTML = `
+        <div class="col-md-6">
+            <select class="form-select producto-select" name="producto_id[]" required>
+                <option value="">Selecciona un producto</option>
+                {% for producto in productos %}
+                <option value="{{ producto.id }}">
+                    {{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="number" class="form-control cantidad-input" name="cantidad[]" min="1" required>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProducto(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(newRow);
+    actualizarTotal();
+}
+
+function eliminarProducto(button) {
+    const row = button.closest('.row');
+    row.remove();
+    actualizarTotal();
+}
+
+function actualizarTotal() {
+    let subtotal = 0;
+    const productos = document.querySelectorAll('.producto-select');
+    const cantidades = document.querySelectorAll('.cantidad-input');
+
+    productos.forEach((producto, index) => {
+        if (producto.value) {
+            const precio = parseFloat(producto.options[producto.selectedIndex].text.split('$')[1]);
+            const cantidad = parseInt(cantidades[index].value) || 0;
+            subtotal += precio * cantidad;
+        }
+    });
+
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+
+    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('iva').textContent = `$${iva.toFixed(2)}`;
+    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const productos = document.querySelectorAll('.producto-select');
+    const cantidades = document.querySelectorAll('.cantidad-input');
+
+    productos.forEach(producto => {
+        producto.addEventListener('change', actualizarTotal);
+    });
+
+    cantidades.forEach(cantidad => {
+        cantidad.addEventListener('input', actualizarTotal);
+    });
+
+    actualizarTotal();
+});
+</script>
+{% endblock %} 

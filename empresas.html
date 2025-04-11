@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Empresas - ERP Digital{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Gestión de Empresas</h1>
+    <a href="{{ url_for('nueva_empresa') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nueva Empresa
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Fecha Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empresa in empresas %}
+                    <tr>
+                        <td>{{ empresa.id }}</td>
+                        <td>{{ empresa.nombre }}</td>
+                        <td>{{ empresa.tipo }}</td>
+                        <td>{{ empresa.direccion }}</td>
+                        <td>{{ empresa.telefono }}</td>
+                        <td>{{ empresa.email }}</td>
+                        <td>{{ empresa.fecha_registro.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('editar_empresa', id=empresa.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminar({{ empresa.id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmarEliminar(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta empresa?')) {
+        window.location.href = `/empresas/eliminar/${id}`;
+    }
+}
+</script>
+{% endblock %} 

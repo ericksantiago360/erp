@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - ERP Digital{% endblock %}
+
+{% block content %}
+<div class="row align-items-center min-vh-75">
+    <div class="col-md-6">
+        <h1 class="display-4 fw-bold mb-4">ERP Digital para Empresas</h1>
+        <p class="lead mb-4">
+            Gestiona tu empresa digital de manera eficiente con nuestra plataforma ERP.
+            Controla inventario, ventas, clientes y más en un solo lugar.
+        </p>
+        <div class="d-grid gap-2 d-md-flex">
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-md-2">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+            <a href="#features" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-info-circle"></i> Conocer Más
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <img src="{{ url_for('static', filename='img/hero-image.svg') }}" alt="ERP Digital" class="img-fluid">
+    </div>
+</div>
+
+<section id="features" class="py-5">
+    <h2 class="text-center mb-5">Características Principales</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Gestión de Productos</h3>
+                    <p class="card-text">
+                        Controla tu inventario, precios y disponibilidad de productos digitales y físicos.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Gestión de Clientes</h3>
+                    <p class="card-text">
+                        Mantén un registro detallado de tus clientes y su historial de compras.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">Reportes y Análisis</h3>
+                    <p class="card-text">
+                        Genera reportes detallados y analiza el rendimiento de tu negocio.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">¿Por qué elegir nuestro ERP?</h2>
+            <ul class="list-unstyled">
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Plataforma 100% en la nube
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Interfaz intuitiva y fácil de usar
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Soporte técnico 24/7
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Actualizaciones constantes
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <img src="{{ url_for('static', filename='img/benefits.svg') }}" alt="Beneficios" class="img-fluid">
+        </div>
+    </div>
+</section>
+{% endblock %} 
